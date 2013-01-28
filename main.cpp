@@ -9,8 +9,8 @@ using namespace Sifteo;
 // METADATA
 
 static Metadata M = Metadata()
-    .title("Pairing Example")
-    .package("com.sifteo.sdk.pairing", "0.1")
+    .title("Rock Paper Scissors")
+    .package("com.sifteo.sdk.rps", "0.1")
     .icon(Icon)
     .cubeRange(1, CUBE_ALLOCATION);
 
@@ -29,6 +29,20 @@ static CubeSet activeCubes; // cubes showing the active scene
 
 static AssetLoader loader; // global asset loader (each cube will have symmetric assets)
 static AssetConfiguration<1> config; // global asset configuration (will just hold the bootstrap group)
+
+const int bg_paper = 0;
+const int bg_scissor = 1;
+const int bg_stone = 2;
+
+int bg_no[] = {bg_paper, bg_scissor, bg_stone};
+
+struct CUBE_STATUS {   // Declare CUBE_STATUS struct type
+   int bg_id;   
+   int cube_id;
+   //String cube_stat;
+} cube_member;
+
+//struct CUBE_STATUS cube_list[] = new struct CUBE_STATUS[CubeSet::connected().size()];
 
 // FUNCTIONS
 
@@ -94,11 +108,28 @@ static bool hideSideBar(CubeID cid, Side s) {
     }
 }
 
+// activate cube
 static void activateCube(CubeID cid) {
     // mark cube as active and render its canvas
     activeCubes.mark(cid);
     vbuf[cid].initMode(BG0_SPR_BG1);
     vbuf[cid].bg0.image(vec(0,0), Backgrounds, 0);
+    auto neighbors = vbuf[cid].physicalNeighbors();
+    for(int side=0; side<4; ++side) {
+        if (neighbors.hasNeighborAt(Side(side))) {
+            showSideBar(cid, Side(side));
+        } else {
+            hideSideBar(cid, Side(side));
+        }
+    }
+}
+
+// activate cube with specified background
+static void activateCube(CubeID cid, int bg_id) {
+    // mark cube as active and render its canvas
+    activeCubes.mark(cid);
+    vbuf[cid].initMode(BG0_SPR_BG1);
+    vbuf[cid].bg0.image(vec(0,0), Backgrounds, bg_id);
     auto neighbors = vbuf[cid].physicalNeighbors();
     for(int side=0; side<4; ++side) {
         if (neighbors.hasNeighborAt(Side(side))) {
@@ -216,6 +247,16 @@ void main() {
     // initialize cubes
     AudioTracker::setVolume(0.2f * AudioChannel::MAX_VOLUME);
     AudioTracker::play(Music);
+
+    CubeSet cubes_connected = CubeSet::connected();
+    int i=0;
+/*
+    for(; i < cubes_connected.size(); i++){
+        CubeID cid = cubes_connected.getCubeId;
+        vbuf[cid].attach(cid);
+        activateCube(cid, bg_no[i]);
+    } */
+
     for(CubeID cid : CubeSet::connected()) {
         vbuf[cid].attach(cid);
         activateCube(cid);

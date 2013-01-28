@@ -9,7 +9,7 @@ Bars = {
 	image{ "assets/bar_bottom.png", pinned=true },
 	image{ "assets/bar_right.png", pinned=true }
 }
-Backgrounds = image{ { "assets/bg_sleep.png", "assets/bg_wake.png" } }
+Backgrounds = image{ { "assets/paper.png", "assets/scissor.png", "assets/stone.png" } }
 
 Music = tracker{ "assets/ultrasyd-toy_world.xm" } -- Toy World Is On Fire by Ultrasyd, Non-commercial License
 SfxAttach = sound{ "assets/attach.raw" }
