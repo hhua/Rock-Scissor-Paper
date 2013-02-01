@@ -222,6 +222,30 @@ static void onCubeTouch(void* ctxt, unsigned cid){
 
 static void onCubeAccelChange(void* ctxt, unsigned cid){
     ASSERT(activeCubes.test(cid));
+
+    CubeID cube(cid);
+    auto accel = cube.accel();
+    String<64> str;
+
+    unsigned changeFlags = motion[cid].update();
+    if (changeFlags) {
+         // Tilt/shake changed
+
+            LOG("Tilt/shake changed, flags=%08x\n", changeFlags);
+
+            auto tilt = motion[cid].tilt;
+            str << "tilt:"
+                << Fixed(tilt.x, 3)
+                << Fixed(tilt.y, 3)
+                << Fixed(tilt.z, 3) << "\n";
+
+            str << "shake: " << motion[cid].shake;
+
+            //LOG("Tilt/shake: %s\n", str);
+
+
+    }
+
     if(!readyCubes.test(cid)){
         if(cube_list[cid].bg_id == 2){
             vbuf[cid].bg0.image(vec(0,0), Backgrounds, 0);
@@ -230,7 +254,11 @@ static void onCubeAccelChange(void* ctxt, unsigned cid){
             cube_list[cid].bg_id += 1;
             vbuf[cid].bg0.image(vec(0,0), Backgrounds, cube_list[cid].bg_id);
         }
+
+        vbuf[cid].bg0rom.text(vec(1,10), str);
     }
+
+    
 }
 
 static bool isActive(NeighborID nid) {
@@ -241,8 +269,33 @@ static bool isActive(NeighborID nid) {
 static void onNeighborAdd(void* ctxt, unsigned cube0, unsigned side0, unsigned cube1, unsigned side1) {
     // update art on active cubes (not loading cubes or base)
     bool sfx = false;
-    if (isActive(cube0)) { sfx |= showSideBar(cube0, Side(side0)); }
-    if (isActive(cube1)) { sfx |= showSideBar(cube1, Side(side1)); }
+    //if (isActive(cube0)) { sfx |= showSideBar(cube0, Side(side0)); }
+    //if (isActive(cube1)) { sfx |= showSideBar(cube1, Side(side1)); }
+
+    if (isActive(cube0) && isActive(cube1)) { 
+        int win = compareTwoCubes(cube0, cube1);
+        if(win == 1){ // cube0 wins
+            vbuf[cube0].sprites[Side(0)].setImage(LabelWin);
+            vbuf[cube0].sprites[Side(0)].move(vec(0, 48));
+            vbuf[cube1].sprites[Side(0)].setImage(LabelLose);
+            vbuf[cube1].sprites[Side(0)].move(vec(0, 48));
+        }else if(win == 0){ // lose
+            vbuf[cube0].sprites[Side(0)].setImage(LabelLose);
+            vbuf[cube0].sprites[Side(0)].move(vec(0, 48));
+            vbuf[cube1].sprites[Side(0)].setImage(LabelWin);
+            vbuf[cube1].sprites[Side(0)].move(vec(0, 48));
+        }else{ // tie
+            vbuf[cube0].sprites[Side(0)].setImage(LabelTie);
+            vbuf[cube0].sprites[Side(0)].move(vec(0, 48));
+            vbuf[cube1].sprites[Side(0)].setImage(LabelTie);
+            vbuf[cube1].sprites[Side(0)].move(vec(0, 48));
+        }
+
+        vbuf[cube0].bg0.image(vec(0,0), Backgrounds, cube_list[cube0].bg_id);
+        vbuf[cube1].bg0.image(vec(0,0), Backgrounds, cube_list[cube1].bg_id);
+    }
+
+
     if (sfx) { playSfx(SfxAttach); }
 }
 
@@ -289,6 +342,24 @@ void main() {
     for(;;) {
         paintWrapper();
     } 
+}
+
+static int compareTwoCubes(unsigned cube0, unsigned cube1){
+    CubeID cid0(cube0);
+    CubeID cid1(cube1);
+
+    // if cube0 wins, return true; and vice versa
+    if(cube_list[cid0].bg_id == 0 && cube_list[cid1].bg_id == 2){
+        return 1;
+    }else if(cube_list[cid0].bg_id == 2 && cube_list[cid1].bg_id == 0){
+        return 0;
+    }else if(cube_list[cid0].bg_id < cube_list[cid1].bg_id){
+        return 0;
+    }else if(cube_list[cid0].bg_id > cube_list[cid1].bg_id){
+        return 1;
+    }else{ // tie
+        return 2;
+    }
 }
 
 

@@ -9,7 +9,7 @@ Bars = {
 	image{ "assets/bar_bottom.png", pinned=true },
 	image{ "assets/bar_right.png", pinned=true }
 }
-Backgrounds = image{ { "assets/paper.png", "assets/scissor.png", "assets/stone.png" } }
+Backgrounds = image{ { "assets/paper.png", "assets/scissor.png", "assets/stone.png" } } 
 IconScissor = image{"assets/scissor.png"}
 IconPaper = image{"assets/paper.png"}
 IconRock = image{"assets/stone.png"}
@@ -29,6 +29,10 @@ IconSandwich = image{ "assets/IconSandwich.png" }
 IconChroma = image{ "assets/IconChroma.png" }
 IconPeano = image{ "assets/IconPeano.png" }
 IconBuddy = image{ "assets/IconBuddy.png"}
+
+LabelWin = image{ "assets/winner.png", pinned=true }
+LabelLose = image{ "assets/youlose.png", pinned=true }
+LabelTie = image{ "assets/tryagain.png", pinned=true }
 
 Tip0 = image{ "assets/Tip0.png" }
 Tip1 = image{ "assets/Tip1.png" }
