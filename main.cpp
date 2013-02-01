@@ -47,6 +47,7 @@ int bg_no[] = {bg_paper, bg_scissor, bg_stone};
 struct CUBE_STATUS {   // Declare CUBE_STATUS struct type
    int bg_id;   
    int cube_id;
+   bool isWin;
    //String cube_stat;
 } cube_member;
 
@@ -121,7 +122,7 @@ static void activateCube(CubeID cid) {
     // mark cube as active and render its canvas
     activeCubes.mark(cid);
     vbuf[cid].initMode(BG0_SPR_BG1);
-    vbuf[cid].bg0.image(vec(0,0), Backgrounds, cid);
+    vbuf[cid].bg0.image(vec(0,0), Backgrounds, 0);
     auto neighbors = vbuf[cid].physicalNeighbors();
 /*    for(int side=0; side<4; ++side) {
         if (neighbors.hasNeighborAt(Side(side))) {
@@ -218,6 +219,15 @@ static void onCubeRefresh(void* ctxt, unsigned cid) {
     dirtyCubes.mark(cid);
 }
 
+static void onCubeTouch(void* ctxt, unsigned cid){
+    ASSERT(activeCubes.test(cid));
+    vbuf[cid].bg0.image(vec(0,0), Silence, 0);
+}
+
+static void onCubeAccelChange(void* ctxt, unsigned cid){
+    ASSERT(activeCubes.test(cid));
+}
+
 static bool isActive(NeighborID nid) {
     // Does this nid indicate an active cube?
     return nid.isCube() && activeCubes.test(nid);
@@ -248,6 +258,8 @@ void main() {
     Events::cubeConnect.set(onCubeConnect);
     Events::cubeDisconnect.set(onCubeDisconnect);
     Events::cubeRefresh.set(onCubeRefresh);
+    Events::cubeTouch.set(onCubeTouch);
+    Events::cubeAccelChange.set(onCubeAccelChange);
 
     Events::neighborAdd.set(onNeighborAdd);
     Events::neighborRemove.set(onNeighborRemove);
@@ -264,7 +276,7 @@ void main() {
     //for(CubeID cid : CubeSet::connected()) {
     for(CubeID cid = 0; cid != gNumCubes; ++cid) {
         vbuf[cid].attach(cid);
-        activateCube(cid);
+        activateCube(cid, cid);
     }
     
     // run loop

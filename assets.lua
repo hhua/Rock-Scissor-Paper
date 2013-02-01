@@ -14,6 +14,8 @@ IconScissor = image{"assets/scissor.png"}
 IconPaper = image{"assets/paper.png"}
 IconRock = image{"assets/stone.png"}
 
+Silence = image{"assets/silence.png"}
+
 Music = tracker{ "assets/ultrasyd-toy_world.xm" } -- Toy World Is On Fire by Ultrasyd, Non-commercial License
 SfxAttach = sound{ "assets/attach.raw" }
 SfxDetach = sound{ "assets/detach.raw" }
