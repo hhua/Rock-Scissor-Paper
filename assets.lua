@@ -15,3 +15,24 @@ Music = tracker{ "assets/ultrasyd-toy_world.xm" } -- Toy World Is On Fire by Ult
 SfxAttach = sound{ "assets/attach.raw" }
 SfxDetach = sound{ "assets/detach.raw" }
 SfxConnect = sound{ "assets/connect.raw" }
+
+BgTile = image{ "assets/bg.png", pinned=1 }
+StripeTile = image{ "assets/stripes.png", pinned=1 }
+
+
+IconSandwich = image{ "assets/IconSandwich.png" }
+IconChroma = image{ "assets/IconChroma.png" }
+IconPeano = image{ "assets/IconPeano.png" }
+IconBuddy = image{ "assets/IconBuddy.png"}
+
+Tip0 = image{ "assets/Tip0.png" }
+Tip1 = image{ "assets/Tip1.png" }
+Tip2 = image{ "assets/Tip2.png" }
+
+Footer = image{ "assets/Footer.png" }
+
+LabelEmpty = image{ "assets/LabelEmpty.png" }
+LabelSandwich = image{ "assets/LabelSandwich.png" }
+LabelChroma = image{ "assets/LabelChroma.png" }
+LabelPeano = image{ "assets/LabelPeano.png" }
+LabelBuddy = image{ "assets/LabelBuddy.png"}
