@@ -11,7 +11,7 @@ using namespace Sifteo;
 // Static Globals
 static const unsigned gNumCubes = 3;
 static VideoBuffer gVideo[gNumCubes];
-static struct MenuItem gItems[] = { {&IconChroma, &LabelChroma}, {&IconSandwich, &LabelSandwich}, {&IconPeano, &LabelPeano}, {&IconBuddy, &LabelBuddy}, {&IconChroma, NULL}, {NULL, NULL} };
+static struct MenuItem gItems[] = { {&IconChroma, NULL}, {&IconSandwich, NULL}, {&IconPeano, NULL}, {NULL, NULL} };
 static struct MenuAssets gAssets = {&BgTile, &Footer, &LabelEmpty, {&Tip0, &Tip1, &Tip2, NULL}};
 
 // METADATA
@@ -121,15 +121,15 @@ static void activateCube(CubeID cid) {
     // mark cube as active and render its canvas
     activeCubes.mark(cid);
     vbuf[cid].initMode(BG0_SPR_BG1);
-    vbuf[cid].bg0.image(vec(0,0), Backgrounds, 0);
+    vbuf[cid].bg0.image(vec(0,0), Backgrounds, cid);
     auto neighbors = vbuf[cid].physicalNeighbors();
-    for(int side=0; side<4; ++side) {
+/*    for(int side=0; side<4; ++side) {
         if (neighbors.hasNeighborAt(Side(side))) {
             showSideBar(cid, Side(side));
         } else {
             hideSideBar(cid, Side(side));
         }
-    }
+    }*/
 }
 
 // activate cube with specified background
@@ -245,12 +245,12 @@ void main() {
     loader.init();
 
     // subscribe to events
-    //Events::cubeConnect.set(onCubeConnect);
-    //Events::cubeDisconnect.set(onCubeDisconnect);
-    //Events::cubeRefresh.set(onCubeRefresh);
+    Events::cubeConnect.set(onCubeConnect);
+    Events::cubeDisconnect.set(onCubeDisconnect);
+    Events::cubeRefresh.set(onCubeRefresh);
 
-    //Events::neighborAdd.set(onNeighborAdd);
-    //Events::neighborRemove.set(onNeighborRemove);
+    Events::neighborAdd.set(onNeighborAdd);
+    Events::neighborRemove.set(onNeighborRemove);
     
     // initialize cubes
     AudioTracker::setVolume(0.2f * AudioChannel::MAX_VOLUME);
@@ -259,23 +259,28 @@ void main() {
     CubeSet cubes_connected = CubeSet::connected();
     int i=0;
 
-    runMenu();
-/*
+    //runMenu();
 
-    for(CubeID cid : CubeSet::connected()) {
+    //for(CubeID cid : CubeSet::connected()) {
+    for(CubeID cid = 0; cid != gNumCubes; ++cid) {
         vbuf[cid].attach(cid);
-        //activateCube(cid);
+        activateCube(cid);
     }
     
     // run loop
     for(;;) {
         paintWrapper();
-    } */
+    } 
 }
 
+
+
 static void runMenu(){
+    CubeSet cubes_connected = CubeSet::connected();
+
     // Blank screens, attach VideoBuffers
     for(CubeID cube = 0; cube != gNumCubes; ++cube) {
+    //for(CubeID cube : CubeSet::connected()) {
         auto &vid = gVideo[cube];
         vid.initMode(BG0);
         vid.attach(cube);
@@ -283,7 +288,11 @@ static void runMenu(){
     }
 
     Menu m(gVideo[0], &gAssets, gItems);
+    Menu m1(gVideo[1], &gAssets, gItems);
+    Menu m2(gVideo[2], &gAssets, gItems);
     m.anchor(2);
+    m1.anchor(1);
+    m2.anchor(0);
 
     struct MenuEvent e;
     uint8_t item;
@@ -353,4 +362,6 @@ static void runMenu(){
 
         LOG("Selected Game: %d\n", e.item);
     }
+
+    
 }

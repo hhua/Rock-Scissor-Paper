@@ -10,6 +10,9 @@ Bars = {
 	image{ "assets/bar_right.png", pinned=true }
 }
 Backgrounds = image{ { "assets/paper.png", "assets/scissor.png", "assets/stone.png" } }
+IconScissor = image{"assets/scissor.png"}
+IconPaper = image{"assets/paper.png"}
+IconRock = image{"assets/stone.png"}
 
 Music = tracker{ "assets/ultrasyd-toy_world.xm" } -- Toy World Is On Fire by Ultrasyd, Non-commercial License
 SfxAttach = sound{ "assets/attach.raw" }
@@ -32,7 +35,3 @@ Tip2 = image{ "assets/Tip2.png" }
 Footer = image{ "assets/Footer.png" }
 
 LabelEmpty = image{ "assets/LabelEmpty.png" }
-LabelSandwich = image{ "assets/LabelSandwich.png" }
-LabelChroma = image{ "assets/LabelChroma.png" }
-LabelPeano = image{ "assets/LabelPeano.png" }
-LabelBuddy = image{ "assets/LabelBuddy.png"}
