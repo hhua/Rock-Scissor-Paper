@@ -6,4 +6,5 @@ What makes a game playful and unforgettable? One can easily tries many games and
 ###Deliverables
 The final deliverables for this project include sketches illustrate idea development and a Sifteo prototype.
 
-![pic0 icon](http://farm9.staticflickr.com/8471/8434823686_bc0c43ae42.jpg)
+![pic0 icon](http://farm9.staticflickr.com/8471/8434823686_bc0c43ae42_b.jpg)
+
