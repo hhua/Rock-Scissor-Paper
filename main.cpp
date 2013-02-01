@@ -11,6 +11,7 @@ using namespace Sifteo;
 // Static Globals
 static const unsigned gNumCubes = 3;
 static VideoBuffer gVideo[gNumCubes];
+static TiltShakeRecognizer motion[gNumCubes];
 static struct MenuItem gItems[] = { {&IconChroma, NULL}, {&IconSandwich, NULL}, {&IconPeano, NULL}, {NULL, NULL} };
 static struct MenuAssets gAssets = {&BgTile, &Footer, &LabelEmpty, {&Tip0, &Tip1, &Tip2, NULL}};
 
@@ -34,24 +35,14 @@ static CubeSet lostCubes; // lost cubes as a result of paint()
 static CubeSet reconnectedCubes; // reconnected (lost->new) cubes as a result of paint()
 static CubeSet dirtyCubes; // dirty cubes as a result of paint()
 static CubeSet activeCubes; // cubes showing the active scene
+static CubeSet readyCubes; // cubes ready for gaming after choosing a bid
 
 static AssetLoader loader; // global asset loader (each cube will have symmetric assets)
 static AssetConfiguration<1> config; // global asset configuration (will just hold the bootstrap group)
 
-const int bg_paper = 0;
-const int bg_scissor = 1;
-const int bg_stone = 2;
 
-int bg_no[] = {bg_paper, bg_scissor, bg_stone};
 
-struct CUBE_STATUS {   // Declare CUBE_STATUS struct type
-   int bg_id;   
-   int cube_id;
-   bool isWin;
-   //String cube_stat;
-} cube_member;
-
-//struct CUBE_STATUS cube_list[] = new struct CUBE_STATUS[CubeSet::connected().size()];
+CUBE_STATUS cube_list[gNumCubes];
 
 // FUNCTIONS
 
@@ -198,6 +189,7 @@ static void onCubeConnect(void* ctxt, unsigned cid) {
     // begin showing some loading art (have to use BG0ROM since we don't have assets)
     dirtyCubes.mark(cid);
     auto& g = vbuf[cid];
+    motion[cid].attach(cid);
     g.attach(cid);
     g.initMode(BG0_ROM);
     g.bg0rom.fill(vec(0,0), vec(16,16), BG0ROMDrawable::SOLID_BG);
@@ -212,6 +204,7 @@ static void onCubeDisconnect(void* ctxt, unsigned cid) {
     reconnectedCubes.clear(cid);
     dirtyCubes.clear(cid);
     activeCubes.clear(cid);
+    readyCubes.clear(cid);
 }
 
 static void onCubeRefresh(void* ctxt, unsigned cid) {
@@ -221,11 +214,23 @@ static void onCubeRefresh(void* ctxt, unsigned cid) {
 
 static void onCubeTouch(void* ctxt, unsigned cid){
     ASSERT(activeCubes.test(cid));
-    vbuf[cid].bg0.image(vec(0,0), Silence, 0);
+    if(!readyCubes.test(cid)){
+        vbuf[cid].bg0.image(vec(0,0), Silence, 0);
+        readyCubes.mark(cid);
+    }
 }
 
 static void onCubeAccelChange(void* ctxt, unsigned cid){
     ASSERT(activeCubes.test(cid));
+    if(!readyCubes.test(cid)){
+        if(cube_list[cid].bg_id == 2){
+            vbuf[cid].bg0.image(vec(0,0), Backgrounds, 0);
+            cube_list[cid].bg_id = 0;
+        }else{
+            cube_list[cid].bg_id += 1;
+            vbuf[cid].bg0.image(vec(0,0), Backgrounds, cube_list[cid].bg_id);
+        }
+    }
 }
 
 static bool isActive(NeighborID nid) {
@@ -277,6 +282,7 @@ void main() {
     for(CubeID cid = 0; cid != gNumCubes; ++cid) {
         vbuf[cid].attach(cid);
         activateCube(cid, cid);
+        cube_list[cid].bg_id = cid;
     }
     
     // run loop
@@ -286,7 +292,7 @@ void main() {
 }
 
 
-
+/*
 static void runMenu(){
     CubeSet cubes_connected = CubeSet::connected();
 
@@ -376,4 +382,4 @@ static void runMenu(){
     }
 
     
-}
+}*/
