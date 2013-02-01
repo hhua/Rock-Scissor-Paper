@@ -8,3 +8,7 @@ The final deliverables for this project include sketches illustrate idea develop
 
 ![pic0 icon](http://farm9.staticflickr.com/8471/8434823686_bc0c43ae42_b.jpg)
 
+###Collaborators
+Han Hua https://github.com/chinesecold
+Meng Shi https://github.com/mengs
+
